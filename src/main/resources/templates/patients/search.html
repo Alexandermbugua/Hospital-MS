@@ -41,7 +41,7 @@
 
                 <form action="#" method="get" class="space-y-6">
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                        <div class="space-y-2">
+                        <div class="space-y-2 relative">
                             <label for="nationalId" class="block text-sm font-semibold text-gray-700">
                                 National ID Number
                             </label>
@@ -50,11 +50,13 @@
                                    name="nationalId"
                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-gray-900 placeholder-gray-500"
                                    placeholder="Enter 8-digit national ID"
-                                   maxlength="8">
+                                   maxlength="8"
+                                   autocomplete="off">
+                            <div id="nationalIdSuggestions" class="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 hidden max-h-60 overflow-y-auto"></div>
                             <p class="text-sm text-gray-500">8-digit Kenyan national ID number</p>
                         </div>
 
-                        <div class="space-y-2">
+                        <div class="space-y-2 relative">
                             <label for="phoneNumber" class="block text-sm font-semibold text-gray-700">
                                 Phone Number
                             </label>
@@ -63,7 +65,9 @@
                                    name="phoneNumber"
                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-gray-900 placeholder-gray-500"
                                    placeholder="07XXXXXXXX"
-                                   pattern="^07[0-9]{8}$">
+                                   pattern="^07[0-9]{8}$"
+                                   autocomplete="off">
+                            <div id="phoneSuggestions" class="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 hidden max-h-60 overflow-y-auto"></div>
                             <p class="text-sm text-gray-500">10-digit Kenyan mobile number (07XXXXXXXX)</p>
                         </div>
                     </div>
@@ -72,7 +76,7 @@
                         <p class="text-sm text-gray-500 mb-4">OR</p>
                     </div>
 
-                    <div class="space-y-2">
+                    <div class="space-y-2 relative">
                         <label for="fullName" class="block text-sm font-semibold text-gray-700">
                             Full Name
                         </label>
@@ -80,7 +84,9 @@
                                id="fullName" 
                                name="fullName"
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-gray-900 placeholder-gray-500"
-                               placeholder="Enter patient's full name">
+                               placeholder="Enter patient's full name"
+                               autocomplete="off">
+                        <div id="nameSuggestions" class="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 hidden max-h-60 overflow-y-auto"></div>
                         <p class="text-sm text-gray-500">Search by patient's complete name</p>
                     </div>
 
@@ -113,6 +119,65 @@
     </div>
 
     <script>
+        const dummyPatient = {
+            id: 1,
+            name: "John Kamau Mwangi",
+            phone: "0712345678",
+            nationalId: "12345678",
+            gender: "MALE",
+            bloodGroup: "O_POSITIVE"
+        };
+
+        function showSuggestions(inputId, suggestionsId, searchValue, patient) {
+            const suggestionsDiv = document.getElementById(suggestionsId);
+            if (searchValue.length < 2) {
+                suggestionsDiv.classList.add('hidden');
+                return;
+            }
+
+            const matches = [];
+            if (patient.phone.includes(searchValue)) {
+                matches.push({
+                    text: `${patient.name} - ${patient.phone}`,
+                    value: patient.phone,
+                    type: 'phone'
+                });
+            }
+            if (patient.nationalId.includes(searchValue)) {
+                matches.push({
+                    text: `${patient.name} - ${patient.nationalId}`,
+                    value: patient.nationalId,
+                    type: 'nationalId'
+                });
+            }
+            if (patient.name.toLowerCase().includes(searchValue.toLowerCase())) {
+                matches.push({
+                    text: `${patient.name} - ${patient.phone}`,
+                    value: patient.name,
+                    type: 'name'
+                });
+            }
+
+            if (matches.length > 0) {
+                suggestionsDiv.innerHTML = matches.map(match => 
+                    `<div class="px-4 py-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0" 
+                         data-value="${match.value}" data-type="${match.type}">
+                        <div class="font-medium text-gray-900">${match.text}</div>
+                        <div class="text-sm text-gray-500">Click to view patient</div>
+                     </div>`
+                ).join('');
+                suggestionsDiv.classList.remove('hidden');
+            } else {
+                suggestionsDiv.classList.add('hidden');
+            }
+        }
+
+        function hideSuggestions(suggestionsId) {
+            setTimeout(() => {
+                document.getElementById(suggestionsId).classList.add('hidden');
+            }, 200);
+        }
+
         document.getElementById('phoneNumber').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
             if (value.length > 0 && value[0] !== '0') {
@@ -122,6 +187,7 @@
                 value = value.substring(0, 10);
             }
             e.target.value = value;
+            showSuggestions('phoneNumber', 'phoneSuggestions', value, dummyPatient);
         });
 
         document.getElementById('nationalId').addEventListener('input', function(e) {
@@ -130,7 +196,34 @@
                 value = value.substring(0, 8);
             }
             e.target.value = value;
+            showSuggestions('nationalId', 'nationalIdSuggestions', value, dummyPatient);
         });
+
+        document.getElementById('fullName').addEventListener('input', function(e) {
+            showSuggestions('fullName', 'nameSuggestions', e.target.value, dummyPatient);
+        });
+
+        document.getElementById('phoneSuggestions').addEventListener('click', function(e) {
+            if (e.target.closest('[data-value]')) {
+                window.location.href = '/patients/found';
+            }
+        });
+
+        document.getElementById('nationalIdSuggestions').addEventListener('click', function(e) {
+            if (e.target.closest('[data-value]')) {
+                window.location.href = '/patients/found';
+            }
+        });
+
+        document.getElementById('nameSuggestions').addEventListener('click', function(e) {
+            if (e.target.closest('[data-value]')) {
+                window.location.href = '/patients/found';
+            }
+        });
+
+        document.getElementById('phoneNumber').addEventListener('blur', () => hideSuggestions('phoneSuggestions'));
+        document.getElementById('nationalId').addEventListener('blur', () => hideSuggestions('nationalIdSuggestions'));
+        document.getElementById('fullName').addEventListener('blur', () => hideSuggestions('nameSuggestions'));
     </script>
 </body>
 </html>
