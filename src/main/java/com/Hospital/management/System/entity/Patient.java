@@ -1,12 +1,19 @@
 package com.Hospital.management.System.entity;
 
-import jakarta.persistence.*;
 import java.time.LocalDate;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "patients")
 public class Patient {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,12 +30,11 @@ public class Patient {
     @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOfBirth;
     
+    @Column(name = "gender", nullable = false)
+    private String gender;
+    
     @Column(name = "residence", nullable = false)
     private String residence;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(name = "gender", nullable = false)
-    private Gender gender;
     
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
@@ -36,29 +42,30 @@ public class Patient {
     @Column(name = "national_id_number", nullable = false, unique = true)
     private String nationalIdNumber;
     
-    @Enumerated(EnumType.STRING)
     @Column(name = "blood_group")
-    private BloodGroup bloodGroup;
+    private String bloodGroup;
     
     @Column(name = "allergies", columnDefinition = "TEXT")
     private String allergies;
     
-    public Patient() {}
+    public Patient() {
+    }
     
-    public Patient(String sirName, String burtisimalName, String middleName, LocalDate dateOfBirth, 
-                   String residence, Gender gender, String phoneNumber, String nationalIdNumber, 
-                   BloodGroup bloodGroup, String allergies) {
+    public Patient(String sirName, String burtisimalName, String middleName, LocalDate dateOfBirth,
+                   String gender, String residence, String phoneNumber, String nationalIdNumber,
+                   String bloodGroup, String allergies) {
         this.sirName = sirName;
         this.burtisimalName = burtisimalName;
         this.middleName = middleName;
         this.dateOfBirth = dateOfBirth;
-        this.residence = residence;
         this.gender = gender;
+        this.residence = residence;
         this.phoneNumber = phoneNumber;
         this.nationalIdNumber = nationalIdNumber;
         this.bloodGroup = bloodGroup;
         this.allergies = allergies;
     }
+    
     public Long getId() {
         return id;
     }
@@ -99,20 +106,20 @@ public class Patient {
         this.dateOfBirth = dateOfBirth;
     }
     
+    public String getGender() {
+        return gender;
+    }
+    
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+    
     public String getResidence() {
         return residence;
     }
     
     public void setResidence(String residence) {
         this.residence = residence;
-    }
-    
-    public Gender getGender() {
-        return gender;
-    }
-    
-    public void setGender(Gender gender) {
-        this.gender = gender;
     }
     
     public String getPhoneNumber() {
@@ -131,11 +138,11 @@ public class Patient {
         this.nationalIdNumber = nationalIdNumber;
     }
     
-    public BloodGroup getBloodGroup() {
+    public String getBloodGroup() {
         return bloodGroup;
     }
     
-    public void setBloodGroup(BloodGroup bloodGroup) {
+    public void setBloodGroup(String bloodGroup) {
         this.bloodGroup = bloodGroup;
     }
     
@@ -145,14 +152,5 @@ public class Patient {
     
     public void setAllergies(String allergies) {
         this.allergies = allergies;
-    }
-    
-    public enum Gender {
-        MALE, FEMALE, OTHER
-    }
-    
-    public enum BloodGroup {
-        A_POSITIVE, A_NEGATIVE, B_POSITIVE, B_NEGATIVE, 
-        AB_POSITIVE, AB_NEGATIVE, O_POSITIVE, O_NEGATIVE
     }
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,13 +20,13 @@
             </div>
         </div>
     </nav>
-
+    
     <div class="max-w-4xl mx-auto py-12 sm:px-6 lg:px-8">
         <div class="text-center mb-8">
             <h1 class="text-3xl font-bold text-gray-900 mb-4">Add New Patient</h1>
             <p class="text-lg text-gray-600">First, let's check if this patient already exists in our system</p>
         </div>
-
+        
         <div class="bg-white shadow-lg rounded-lg p-8">
             <div class="max-w-2xl mx-auto">
                 <div class="text-center mb-8">
@@ -39,15 +39,38 @@
                     <p class="text-gray-600">Enter either the National ID or Phone Number to check if the patient is already registered</p>
                 </div>
 
-                <form action="#" method="get" class="space-y-6">
+                <div th:if="${patient != null}" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-green-800">Patient Found!</h3>
+                            <div class="mt-2 text-sm text-green-700">
+                                <p><strong>Name:</strong> <span th:text="${patient.sirName + ' ' + patient.burtisimalName + ' ' + (patient.middleName != null ? patient.middleName : '')}"></span></p>
+                                <p><strong>Phone:</strong> <span th:text="${patient.phoneNumber}"></span></p>
+                                <p><strong>National ID:</strong> <span th:text="${patient.nationalIdNumber}"></span></p>
+                            </div>
+                            <div class="mt-4">
+                                <a th:href="@{/patients/found(id=${patient.id})}" class="text-sm font-medium text-green-800 hover:text-green-600">
+                                    View Patient Details →
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <form action="/patients/search" method="post" class="space-y-6">
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <div class="space-y-2 relative">
-                            <label for="nationalId" class="block text-sm font-semibold text-gray-700">
+                            <label for="nationalIdNumber" class="block text-sm font-semibold text-gray-700">
                                 National ID Number
                             </label>
                             <input type="text" 
-                                   id="nationalId" 
-                                   name="nationalId"
+                                   id="nationalIdNumber" 
+                                   name="nationalIdNumber"
                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-gray-900 placeholder-gray-500"
                                    placeholder="Enter 8-digit national ID"
                                    maxlength="8"
@@ -101,7 +124,7 @@
                         </button>
                     </div>
                 </form>
-
+                
                 <div class="mt-8 pt-6 border-t border-gray-200">
                     <div class="text-center">
                         <p class="text-sm text-gray-500 mb-4">Can't find the patient?</p>
@@ -119,16 +142,9 @@
     </div>
 
     <script>
-        const dummyPatient = {
-            id: 1,
-            name: "John Kamau Mwangi",
-            phone: "0712345678",
-            nationalId: "12345678",
-            gender: "MALE",
-            bloodGroup: "O_POSITIVE"
-        };
+        const patients = /*[[${patients}]]*/ [];
 
-        function showSuggestions(inputId, suggestionsId, searchValue, patient) {
+        function showSuggestions(inputId, suggestionsId, searchValue, patients) {
             const suggestionsDiv = document.getElementById(suggestionsId);
             if (searchValue.length < 2) {
                 suggestionsDiv.classList.add('hidden');
@@ -136,32 +152,39 @@
             }
 
             const matches = [];
-            if (patient.phone.includes(searchValue)) {
-                matches.push({
-                    text: `${patient.name} - ${patient.phone}`,
-                    value: patient.phone,
-                    type: 'phone'
-                });
-            }
-            if (patient.nationalId.includes(searchValue)) {
-                matches.push({
-                    text: `${patient.name} - ${patient.nationalId}`,
-                    value: patient.nationalId,
-                    type: 'nationalId'
-                });
-            }
-            if (patient.name.toLowerCase().includes(searchValue.toLowerCase())) {
-                matches.push({
-                    text: `${patient.name} - ${patient.phone}`,
-                    value: patient.name,
-                    type: 'name'
-                });
-            }
+            patients.forEach(patient => {
+                const fullName = `${patient.sirName} ${patient.burtisimalName} ${patient.middleName || ''}`.trim();
+                
+                if (patient.phoneNumber && patient.phoneNumber.includes(searchValue)) {
+                    matches.push({
+                        text: `${fullName} - ${patient.phoneNumber}`,
+                        value: patient.phoneNumber,
+                        type: 'phone',
+                        id: patient.id
+                    });
+                }
+                if (patient.nationalIdNumber && patient.nationalIdNumber.includes(searchValue)) {
+                    matches.push({
+                        text: `${fullName} - ${patient.nationalIdNumber}`,
+                        value: patient.nationalIdNumber,
+                        type: 'nationalId',
+                        id: patient.id
+                    });
+                }
+                if (fullName.toLowerCase().includes(searchValue.toLowerCase())) {
+                    matches.push({
+                        text: `${fullName} - ${patient.phoneNumber}`,
+                        value: fullName,
+                        type: 'name',
+                        id: patient.id
+                    });
+                }
+            });
 
             if (matches.length > 0) {
                 suggestionsDiv.innerHTML = matches.map(match => 
                     `<div class="px-4 py-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0" 
-                         data-value="${match.value}" data-type="${match.type}">
+                         data-value="${match.value}" data-type="${match.type}" data-id="${match.id}">
                         <div class="font-medium text-gray-900">${match.text}</div>
                         <div class="text-sm text-gray-500">Click to view patient</div>
                      </div>`
@@ -187,42 +210,45 @@
                 value = value.substring(0, 10);
             }
             e.target.value = value;
-            showSuggestions('phoneNumber', 'phoneSuggestions', value, dummyPatient);
+            showSuggestions('phoneNumber', 'phoneSuggestions', value, patients);
         });
 
-        document.getElementById('nationalId').addEventListener('input', function(e) {
+        document.getElementById('nationalIdNumber').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
             if (value.length > 8) {
                 value = value.substring(0, 8);
             }
             e.target.value = value;
-            showSuggestions('nationalId', 'nationalIdSuggestions', value, dummyPatient);
+            showSuggestions('nationalIdNumber', 'nationalIdSuggestions', value, patients);
         });
 
         document.getElementById('fullName').addEventListener('input', function(e) {
-            showSuggestions('fullName', 'nameSuggestions', e.target.value, dummyPatient);
+            showSuggestions('fullName', 'nameSuggestions', e.target.value, patients);
         });
 
         document.getElementById('phoneSuggestions').addEventListener('click', function(e) {
             if (e.target.closest('[data-value]')) {
-                window.location.href = '/patients/found';
+                const patientId = e.target.closest('[data-value]').getAttribute('data-id');
+                window.location.href = '/patients/found?id=' + patientId;
             }
         });
 
         document.getElementById('nationalIdSuggestions').addEventListener('click', function(e) {
             if (e.target.closest('[data-value]')) {
-                window.location.href = '/patients/found';
+                const patientId = e.target.closest('[data-value]').getAttribute('data-id');
+                window.location.href = '/patients/found?id=' + patientId;
             }
         });
 
         document.getElementById('nameSuggestions').addEventListener('click', function(e) {
             if (e.target.closest('[data-value]')) {
-                window.location.href = '/patients/found';
+                const patientId = e.target.closest('[data-value]').getAttribute('data-id');
+                window.location.href = '/patients/found?id=' + patientId;
             }
         });
 
         document.getElementById('phoneNumber').addEventListener('blur', () => hideSuggestions('phoneSuggestions'));
-        document.getElementById('nationalId').addEventListener('blur', () => hideSuggestions('nationalIdSuggestions'));
+        document.getElementById('nationalIdNumber').addEventListener('blur', () => hideSuggestions('nationalIdSuggestions'));
         document.getElementById('fullName').addEventListener('blur', () => hideSuggestions('nameSuggestions'));
     </script>
 </body>
