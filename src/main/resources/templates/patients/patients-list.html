@@ -20,6 +20,7 @@
             </div>
         </div>
     </nav>
+    
     <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div class="px-4 py-6 sm:px-0">
             <div class="flex justify-between items-center mb-6">
@@ -27,7 +28,7 @@
                     <h1 class="text-3xl font-bold text-gray-900">Patient Management</h1>
                     <p class="mt-2 text-gray-600">Manage patient records and information</p>
                 </div>
-                <a href="/patients/new" 
+                <a href="/patients/search" 
                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-150 ease-in-out">
                     Add New Patient
                 </a>
@@ -54,6 +55,7 @@
                 </div>
             </div>
         </div>
+        
         <div class="bg-white shadow overflow-hidden sm:rounded-md">
             <div class="px-4 py-5 sm:p-6">
                 <div class="overflow-x-auto">
@@ -87,59 +89,25 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            <tr th:each="patient : ${patients}" class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" 
-                                    th:text="${patient.id}">
-                                </td>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900" 
-                                         th:text="${(patient.sirName != null ? patient.sirName : '') + ' ' + (patient.burtisimalName != null ? patient.burtisimalName : '') + (patient.middleName != null ? ' ' + patient.middleName : '')}">
-                                    </div>
+                                    <div class="text-sm font-medium text-gray-900">John Kamau Mwangi</div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" 
-                                    th:text="${patient.dateOfBirth != null ? #temporals.format(patient.dateOfBirth, 'dd/MM/yyyy') : 'Not specified'}">
-                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15/06/1985</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                                          th:class="${patient.gender != null and patient.gender.name() == 'MALE'} ? 'bg-blue-100 text-blue-800' : (${patient.gender != null and patient.gender.name() == 'FEMALE'} ? 'bg-pink-100 text-pink-800' : 'bg-gray-100 text-gray-800')"
-                                          th:text="${patient.gender != null ? patient.gender : 'Not specified'}">
-                                    </span>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">MALE</span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" 
-                                    th:text="${patient.phoneNumber != null ? patient.phoneNumber : 'Not specified'}">
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" 
-                                    th:text="${patient.nationalIdNumber != null ? patient.nationalIdNumber : 'Not specified'}">
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" 
-                                    th:text="${patient.bloodGroup != null ? patient.bloodGroup : 'Not specified'}">
-                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">0712345678</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12345678</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">O_POSITIVE</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <a th:href="@{/patients/edit/{id}(id=${patient.id})}" 
-                                       class="text-blue-600 hover:text-blue-900 mr-3">Edit</a>
-                                    <a href="#" 
-                                       class="text-red-600 hover:text-red-900">Delete</a>
+                                    <a href="/patients/edit/1" class="text-blue-600 hover:text-blue-900 mr-3">Edit</a>
+                                    <a href="#" class="text-red-600 hover:text-red-900">Delete</a>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                </div>
-                
-                <div th:if="${#lists.isEmpty(patients)}" class="text-center py-12">
-                    <div class="mx-auto h-12 w-12 text-gray-400">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="mt-2 text-sm font-medium text-gray-900">No patients</h3>
-                    <p class="mt-1 text-sm text-gray-500">Get started by adding a new patient.</p>
-                    <div class="mt-6">
-                        <a href="/patients/new" 
-                           class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-                            Add New Patient
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
