@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,53 +38,55 @@
             </div>
             
             <div class="p-6">
-                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" th:if="${patient != null}">
                     <div class="space-y-2">
                         <label class="block text-sm font-medium text-gray-500">Patient ID</label>
-                        <p class="text-lg font-semibold text-gray-900">#001</p>
+                        <p class="text-lg font-semibold text-gray-900" th:text="'#' + ${patient.id}"></p>
                     </div>
                     
                     <div class="space-y-2">
                         <label class="block text-sm font-medium text-gray-500">Full Name</label>
-                        <p class="text-lg font-semibold text-gray-900">John Kamau Mwangi</p>
+                        <p class="text-lg font-semibold text-gray-900" th:text="${patient.sirName + ' ' + patient.burtisimalName + ' ' + (patient.middleName != null ? patient.middleName : '')}"></p>
                     </div>
                     
                     <div class="space-y-2">
                         <label class="block text-sm font-medium text-gray-500">Date of Birth</label>
-                        <p class="text-lg font-semibold text-gray-900">15/06/1985</p>
+                        <p class="text-lg font-semibold text-gray-900" th:text="${#temporals.format(patient.dateOfBirth, 'dd/MM/yyyy')}"></p>
                     </div>
                     
                     <div class="space-y-2">
                         <label class="block text-sm font-medium text-gray-500">Gender</label>
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                            MALE
-                        </span>
+                        <span th:class="${'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ' + (patient.gender == 'MALE' ? 'bg-blue-100 text-blue-800' : (patient.gender == 'FEMALE' ? 'bg-pink-100 text-pink-800' : 'bg-gray-100 text-gray-800'))}" th:text="${patient.gender}"></span>
                     </div>
                     
                     <div class="space-y-2">
                         <label class="block text-sm font-medium text-gray-500">Phone Number</label>
-                        <p class="text-lg font-semibold text-gray-900">0712345678</p>
+                        <p class="text-lg font-semibold text-gray-900" th:text="${patient.phoneNumber}"></p>
                     </div>
                     
                     <div class="space-y-2">
                         <label class="block text-sm font-medium text-gray-500">National ID</label>
-                        <p class="text-lg font-semibold text-gray-900">12345678</p>
+                        <p class="text-lg font-semibold text-gray-900" th:text="${patient.nationalIdNumber}"></p>
                     </div>
                     
                     <div class="space-y-2">
                         <label class="block text-sm font-medium text-gray-500">Blood Group</label>
-                        <p class="text-lg font-semibold text-gray-900">O_POSITIVE</p>
+                        <p class="text-lg font-semibold text-gray-900" th:text="${patient.bloodGroup}"></p>
                     </div>
                     
                     <div class="space-y-2">
                         <label class="block text-sm font-medium text-gray-500">Residence</label>
-                        <p class="text-lg font-semibold text-gray-900">Nairobi, Kenya</p>
+                        <p class="text-lg font-semibold text-gray-900" th:text="${patient.residence}"></p>
                     </div>
                     
                     <div class="space-y-2">
                         <label class="block text-sm font-medium text-gray-500">Allergies</label>
-                        <p class="text-lg font-semibold text-gray-900">None known</p>
+                        <p class="text-lg font-semibold text-gray-900" th:text="${patient.allergies != null ? patient.allergies : 'None known'}"></p>
                     </div>
+                </div>
+                
+                <div th:if="${patient == null}" class="text-center py-8">
+                    <p class="text-gray-500">No patient found.</p>
                 </div>
             </div>
             
@@ -98,7 +100,7 @@
                            class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-200">
                             Back to Patients
                         </a>
-                        <a href="/patients/edit/1" 
+                        <a th:href="@{/patients/edit/{id}(id=${patient.id})}" 
                            class="px-4 py-2 bg-blue-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">
                             Edit Patient
                         </a>

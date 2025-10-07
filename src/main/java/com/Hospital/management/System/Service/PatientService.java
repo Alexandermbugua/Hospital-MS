@@ -36,4 +36,9 @@ public class PatientService {
     public Patient findByPhone(String phone) {
         return patientRepository.findByPhoneNumber(phone).orElse(null);
     }
+    
+    public Patient findByName(String name) {
+        List<Patient> patients = patientRepository.findByNameContaining(name);
+        return patients.isEmpty() ? null : patients.get(0);
+    }
 }

@@ -19,45 +19,47 @@ public class SearchController {
     private PatientService patientService;
 
     @GetMapping("/search")
-    public String showSearch() {
+    public String showSearch(Model model) {
+        model.addAttribute("patients", patientService.getAllPatients());
         return "patients/search";
     }
 
     @PostMapping("/search")
-    public String searchPatient(@RequestParam String nationalIdNumber,
-                               @RequestParam String phoneNumber,
+    public String searchPatient(@RequestParam(required = false) String nationalIdNumber,
+                               @RequestParam(required = false) String phoneNumber,
+                               @RequestParam(required = false) String fullName,
                                Model model) {
         
-        // Search by national ID
-        if (!nationalIdNumber.isEmpty()) {
-            Patient patient = patientService.findByNationalId(nationalIdNumber);
-            if (patient != null) {
-                model.addAttribute("patient", patient);
-                return "patients/search";
-            }
+        Patient foundPatient = null;
+        
+        if (nationalIdNumber != null && !nationalIdNumber.trim().isEmpty()) {
+            foundPatient = patientService.findByNationalId(nationalIdNumber.trim());
+        }
+        
+        if (foundPatient == null && phoneNumber != null && !phoneNumber.trim().isEmpty()) {
+            foundPatient = patientService.findByPhone(phoneNumber.replaceAll("\\D", ""));
+        }
+        
+        if (foundPatient == null && fullName != null && !fullName.trim().isEmpty()) {
+            foundPatient = patientService.findByName(fullName.trim());
         }
 
-        // Search by phone
-        if (!phoneNumber.isEmpty()) {
-            Patient patient = patientService.findByPhone(phoneNumber.replaceAll("\\D", ""));
-            if (patient != null) {
-                model.addAttribute("patient", patient);
-                return "patients/search";
-            }
+        if (foundPatient != null) {
+            model.addAttribute("patient", foundPatient);
+            return "patients/found";
         }
 
-        // Not found - go to add form
-        return "redirect:/patients/search/new?nationalId=" + nationalIdNumber + "&phone=" + phoneNumber;
+        return "redirect:/patients/new";
     }
 
-    @GetMapping("/search/new")
-    public String newFromSearch(@RequestParam String nationalId, 
-                               @RequestParam String phone, 
-                               Model model) {
-        Patient patient = new Patient();
-        patient.setNationalIdNumber(nationalId);
-        patient.setPhoneNumber(phone);
-        model.addAttribute("patient", patient);
-        return "patients/patient-form";
+    @GetMapping("/found")
+    public String showFoundPatient(@RequestParam(required = false) Long id, Model model) {
+        if (id != null) {
+            Patient patient = patientService.getPatientById(id);
+            if (patient != null) {
+                model.addAttribute("patient", patient);
+            }
+        }
+        return "patients/found";
     }
 }
