@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Patient</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-white shadow p-4">
+        <a href="/patients" class="text-blue-600">Back to Patients</a>
+    </nav>
+
+    <div class="max-w-2xl mx-auto p-6">
+        <h1 class="text-2xl font-bold mb-6">Search Patient</h1>
+        
+        <form action="/patients/search" method="post" class="bg-white p-6 rounded shadow">
+            <div class="space-y-4">
+                <div>
+                    <label class="block font-semibold">National ID</label>
+                    <input type="text" name="nationalIdNumber" class="w-full border p-2 rounded">
+                </div>
+                <div>
+                    <label class="block font-semibold">Phone Number</label>
+                    <input type="text" name="phoneNumber" class="w-full border p-2 rounded">
+                </div>
+            </div>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded mt-4">Search</button>
+        </form>
+
+        <!-- Show if patient found -->
+        <div th:if="${patient}" class="bg-green-100 p-4 rounded mt-4">
+            <p class="font-semibold">Patient Found!</p>
+            <p th:text="${patient.sirName + ' ' + patient.burtisimalName}"></p>
+            <a th:href="@{/patients/edit/{id}(id=${patient.id})}" class="text-blue-600">Edit Patient</a>
+        </div>
+    </div>
+</body>
+</html>
