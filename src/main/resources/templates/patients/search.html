@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Patient - Hospital Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/" class="text-xl font-semibold text-gray-900">Hospital MS</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="text-gray-600 hover:text-gray-900">Home</a>
+                    <a href="/patients" class="text-blue-600 font-medium">Patients</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto py-12 sm:px-6 lg:px-8">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">Add New Patient</h1>
+            <p class="text-lg text-gray-600">First, let's check if this patient already exists in our system</p>
+        </div>
+
+        <div class="bg-white shadow-lg rounded-lg p-8">
+            <div class="max-w-2xl mx-auto">
+                <div class="text-center mb-8">
+                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-4">
+                        <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Search for Existing Patient</h2>
+                    <p class="text-gray-600">Enter either the National ID or Phone Number to check if the patient is already registered</p>
+                </div>
+
+                <form action="#" method="get" class="space-y-6">
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <div class="space-y-2 relative">
+                            <label for="nationalId" class="block text-sm font-semibold text-gray-700">
+                                National ID Number
+                            </label>
+                            <input type="text" 
+                                   id="nationalId" 
+                                   name="nationalId"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-gray-900 placeholder-gray-500"
+                                   placeholder="Enter 8-digit national ID"
+                                   maxlength="8"
+                                   autocomplete="off">
+                            <div id="nationalIdSuggestions" class="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 hidden max-h-60 overflow-y-auto"></div>
+                            <p class="text-sm text-gray-500">8-digit Kenyan national ID number</p>
+                        </div>
+
+                        <div class="space-y-2 relative">
+                            <label for="phoneNumber" class="block text-sm font-semibold text-gray-700">
+                                Phone Number
+                            </label>
+                            <input type="tel" 
+                                   id="phoneNumber" 
+                                   name="phoneNumber"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-gray-900 placeholder-gray-500"
+                                   placeholder="07XXXXXXXX"
+                                   pattern="^07[0-9]{8}$"
+                                   autocomplete="off">
+                            <div id="phoneSuggestions" class="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 hidden max-h-60 overflow-y-auto"></div>
+                            <p class="text-sm text-gray-500">10-digit Kenyan mobile number (07XXXXXXXX)</p>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <p class="text-sm text-gray-500 mb-4">OR</p>
+                    </div>
+
+                    <div class="space-y-2 relative">
+                        <label for="fullName" class="block text-sm font-semibold text-gray-700">
+                            Full Name
+                        </label>
+                        <input type="text" 
+                               id="fullName" 
+                               name="fullName"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-gray-900 placeholder-gray-500"
+                               placeholder="Enter patient's full name"
+                               autocomplete="off">
+                        <div id="nameSuggestions" class="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 hidden max-h-60 overflow-y-auto"></div>
+                        <p class="text-sm text-gray-500">Search by patient's complete name</p>
+                    </div>
+
+                    <div class="flex justify-center space-x-4 pt-6">
+                        <a href="/patients" 
+                           class="px-6 py-3 border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-200">
+                            Cancel
+                        </a>
+                        <button type="submit" 
+                                class="px-8 py-3 bg-blue-600 border border-transparent rounded-lg text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">
+                            Search Patient
+                        </button>
+                    </div>
+                </form>
+
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <div class="text-center">
+                        <p class="text-sm text-gray-500 mb-4">Can't find the patient?</p>
+                        <a href="/patients/new" 
+                           class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 transition duration-200">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            Add New Patient Directly
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const dummyPatient = {
+            id: 1,
+            name: "John Kamau Mwangi",
+            phone: "0712345678",
+            nationalId: "12345678",
+            gender: "MALE",
+            bloodGroup: "O_POSITIVE"
+        };
+
+        function showSuggestions(inputId, suggestionsId, searchValue, patient) {
+            const suggestionsDiv = document.getElementById(suggestionsId);
+            if (searchValue.length < 2) {
+                suggestionsDiv.classList.add('hidden');
+                return;
+            }
+
+            const matches = [];
+            if (patient.phone.includes(searchValue)) {
+                matches.push({
+                    text: `${patient.name} - ${patient.phone}`,
+                    value: patient.phone,
+                    type: 'phone'
+                });
+            }
+            if (patient.nationalId.includes(searchValue)) {
+                matches.push({
+                    text: `${patient.name} - ${patient.nationalId}`,
+                    value: patient.nationalId,
+                    type: 'nationalId'
+                });
+            }
+            if (patient.name.toLowerCase().includes(searchValue.toLowerCase())) {
+                matches.push({
+                    text: `${patient.name} - ${patient.phone}`,
+                    value: patient.name,
+                    type: 'name'
+                });
+            }
+
+            if (matches.length > 0) {
+                suggestionsDiv.innerHTML = matches.map(match => 
+                    `<div class="px-4 py-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0" 
+                         data-value="${match.value}" data-type="${match.type}">
+                        <div class="font-medium text-gray-900">${match.text}</div>
+                        <div class="text-sm text-gray-500">Click to view patient</div>
+                     </div>`
+                ).join('');
+                suggestionsDiv.classList.remove('hidden');
+            } else {
+                suggestionsDiv.classList.add('hidden');
+            }
+        }
+
+        function hideSuggestions(suggestionsId) {
+            setTimeout(() => {
+                document.getElementById(suggestionsId).classList.add('hidden');
+            }, 200);
+        }
+
+        document.getElementById('phoneNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0 && value[0] !== '0') {
+                value = '0' + value;
+            }
+            if (value.length > 10) {
+                value = value.substring(0, 10);
+            }
+            e.target.value = value;
+            showSuggestions('phoneNumber', 'phoneSuggestions', value, dummyPatient);
+        });
+
+        document.getElementById('nationalId').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 8) {
+                value = value.substring(0, 8);
+            }
+            e.target.value = value;
+            showSuggestions('nationalId', 'nationalIdSuggestions', value, dummyPatient);
+        });
+
+        document.getElementById('fullName').addEventListener('input', function(e) {
+            showSuggestions('fullName', 'nameSuggestions', e.target.value, dummyPatient);
+        });
+
+        document.getElementById('phoneSuggestions').addEventListener('click', function(e) {
+            if (e.target.closest('[data-value]')) {
+                window.location.href = '/patients/found';
+            }
+        });
+
+        document.getElementById('nationalIdSuggestions').addEventListener('click', function(e) {
+            if (e.target.closest('[data-value]')) {
+                window.location.href = '/patients/found';
+            }
+        });
+
+        document.getElementById('nameSuggestions').addEventListener('click', function(e) {
+            if (e.target.closest('[data-value]')) {
+                window.location.href = '/patients/found';
+            }
+        });
+
+        document.getElementById('phoneNumber').addEventListener('blur', () => hideSuggestions('phoneSuggestions'));
+        document.getElementById('nationalId').addEventListener('blur', () => hideSuggestions('nationalIdSuggestions'));
+        document.getElementById('fullName').addEventListener('blur', () => hideSuggestions('nameSuggestions'));
+    </script>
+</body>
+</html>
